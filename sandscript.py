@@ -26,7 +26,7 @@ def func(**kw):
 
     Example:
 
-        func(name="sum", args=(pal.int, pal.int), returns=pal.int):
+        @func(name="sum", args=(pal.int, pal.int), returns=pal.int):
         def sum(*args):
             return args[0] + args[1]
 
