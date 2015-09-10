@@ -1,0 +1,24 @@
+Summary: SandScript meets Python
+Name: sandscripthon
+Version: 1.0
+Release: 1
+Vendor: Sandvine
+License: Proprietary
+Group: Utilities
+URL: http://sandvine.com
+Packager: Alexandre Fiori <afiori@sandvine.com>
+Source: %{name}-%{version}.tar.gz
+BuildRoot: %{_topdir}/BUILD/%{name}-%{version}-%{release}
+
+%description
+This package provides a shared library for the policy engine to enable
+exporting Python functions to SandScript.
+
+%prep
+%setup -q
+
+%install
+cp -r * %{buildroot}
+
+%files
+/usr/local/sandvine/
