@@ -34,7 +34,8 @@ def func(**kw):
 
     If the decorated function causes an unhandled exception or returns
     None, the SandScript counterpart returns null regardless of the
-    return data type.
+    return data type. The name of the decorated Python function is
+    ignored, meaning it can be named to anything.
 
     Because the exported function is run by the Policy Engine, it is
     expected to never block and return as quick as possible.
