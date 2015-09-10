@@ -39,6 +39,8 @@ def func(**kw):
 
     Because the exported function is run by the Policy Engine, it is
     expected to never block and return as quick as possible.
+
+    Use of syslog in Python functions write to svlog automatically.
     """
     n = kw.get("name")
     a = kw.get("args")
