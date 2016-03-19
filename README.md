@@ -9,8 +9,8 @@ Python runtime onto the policy engine during startup.
 ## Build and deploy
 
 The shared library must be built on the same system architecture of
-the policy engine, that is a freebsd-x64 for PTS or linux-x64 for SDE,
-and has been only tested with Python 2.
+the policy engine, that is a freebsd-x64 for PTS 32000 or linux-x64
+for SDE and PTS Virtual Series, and has been only tested with Python 2.
 
 Make sure you have the python-dev packages and build it and install.
 
