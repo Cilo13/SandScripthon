@@ -14,9 +14,16 @@ The shared library must be built on the same system architecture of
 the policy engine, that is a freebsd-x64 for PTS or linux-x64 for SDE,
 and has been only tested with Python 2.
 
-Make sure you have the python-dev packages and build it and install:
+Make sure you have the python-dev packages and build it and install.
 
-	make install
+On Centos 7, 
+
+    yum-config-manager --enable repository CentOSPlus
+    sed -i -e '/exclude=/d' /etc/yum.conf 
+    yum groupinstall "Development Tools"
+    yum install python-devel
+    make install
+    systemctl restart svpts.service
 
 This will install the shared library to /usr/local/sandvine/loadable
 and the Python code to /usr/local/sandvine/etc. The only file you
