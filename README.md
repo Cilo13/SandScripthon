@@ -25,6 +25,7 @@ On Centos 7,
 
 This will install the shared library to /usr/local/sandvine/loadable
 and the Python code to /usr/local/sandvine/etc. The only file you
-care about, and can edit, is policy.py.
+care about, and can edit, is policy.py. Note that changes to policy.py
+are only updated on a pts restart (not svreload).
 
 See the policy.conf file, it uses functions exported by policy.py.
