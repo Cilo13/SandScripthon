@@ -7,15 +7,15 @@ import sys
 v = sys.version_info
 
 module = Extension(
-    'sandscripthon',
+    'SandScripthon',
     sources         = ['pal.c'],
     extra_link_args = ['-lpython%d.%d' % (v[0], v[1])],
 )
 
 setup (
-    name        = 'sandscript',
+    name        = 'SandScript',
     version     = '1.0',
-    description = 'SandScript meets Python',
+    description = 'Sandvine SandScript extended with Python',
     ext_modules = [module],
 )
 

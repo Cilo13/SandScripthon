@@ -9,7 +9,7 @@
 #set -ex
 
 VERSION=1.0
-NAME=sandscripthon-${VERSION}
+NAME=SandScripthon-${VERSION}
 
 ROOT=/tmp/rpmbuild.$$
 trap "rm -rf ${ROOT}" EXIT

@@ -2,11 +2,9 @@
 
 SandScripthon is what we call it.
 
-This repo contains the source code of a shared library for the policy
-engine that allows one to write subsystems in Python. It embeds a
+This repo contains the source code of a shared library for the Sandvine
+Policy Engine that allows one to write subsystems in Python. It embeds a
 Python runtime onto the policy engine during startup.
-
-This is a fork of [palso](https://git.sandvine.com/afiori/palso).
 
 ## Build and deploy
 

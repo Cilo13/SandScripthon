@@ -2,7 +2,7 @@
  *
  * This is a SandScript shared library that loads a Python interpreter
  * and let users write policy subsystems in Python. It depends on the
- * special "sandscript" Python module to do so.
+ * special "SandScript" Python module to do so.
  *
  * At this point, the code is pretty alpha and may have bugs and
  * memory leaks.
@@ -15,7 +15,7 @@
 
 #include "pal.h"
 
-#define PYMOD     "sandscript"
+#define PYMOD     "SandScript"
 #define PYUSERMOD "policy"
 #define PYUSERDIR "/usr/local/sandvine/etc"
 
@@ -698,7 +698,7 @@ const psl_Manifest* GetManifest() {
 	PyList_Insert(PySys_GetObject("path"), 0, path);
 	Py_INCREF(path);
 
-	// Import sandscript module.
+	// Import SandScript module.
 	PyObject* sf = PyImport_ImportModule(PYMOD);
 	if (!sf) goto fail;
 	Py_INCREF(sf);

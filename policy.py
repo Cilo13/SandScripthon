@@ -2,8 +2,8 @@
 #
 # Example SandScript functions implemented in Python
 
-from sandscript import pal
-from sandscript import func
+from SandScript import pal
+from SandScript import func
 
 @func(name="Example.Field", args=(pal.str, pal.str, pal.int), returns=pal.str)
 def Field(*args):
