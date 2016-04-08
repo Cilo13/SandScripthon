@@ -9,8 +9,8 @@ Python runtime onto the policy engine during startup.
 ## Build and deploy
 
 The shared library must be built on the same system architecture of
-the policy engine, that is a freebsd-x64 for PTS or linux-x64 for SDE,
-and has been only tested with Python 2.
+the policy engine, that is a freebsd-x64 for PTS 32000 or linux-x64
+for SDE and PTS Virtual Series, and has been only tested with Python 2.
 
 Make sure you have the python-dev packages and build it and install.
 
@@ -25,6 +25,7 @@ On Centos 7,
 
 This will install the shared library to /usr/local/sandvine/loadable
 and the Python code to /usr/local/sandvine/etc. The only file you
-care about, and can edit, is policy.py.
+care about, and can edit, is policy.py. Note that changes to policy.py
+are only updated on a pts restart (not svreload).
 
 See the policy.conf file, it uses functions exported by policy.py.

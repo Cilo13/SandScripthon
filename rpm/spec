@@ -1,11 +1,11 @@
-Summary: SandScript meets Python
+Summary: SandScript extended by Python
 Name: SandScripthon
 Version: $VERSION
 Release: 1
 Vendor: Sandvine
 License: Apache 2.0
 Group: Utilities
-URL: http://sandvine.com
+URL: https://www.sandvine.com
 Packager: Alexandre Fiori <afiori@sandvine.com>
 Source: %{name}-%{version}.tar.gz
 
