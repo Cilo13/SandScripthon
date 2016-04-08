@@ -12,8 +12,17 @@
 */
 
 #include <Python.h>
+#include <syslog.h>
 
 #include "pal.h"
+
+#ifndef VERSION
+#define VERSION "tip"
+#endif
+
+#ifndef GITCOMMIT
+#define GITCOMMIT "HEAD"
+#endif
 
 #define PYMOD     "SandScript"
 #define PYUSERMOD "policy"
@@ -694,6 +703,7 @@ psl_Manifest* buildManifest(PyObject* fl) {
 
 psl_GetManifest GetManifest;
 const psl_Manifest* GetManifest() {
+	syslog(LOG_INFO, "SandScripthon %s (%s)", VERSION, GITCOMMIT);
 	Py_Initialize();
 
 	// Set path.
