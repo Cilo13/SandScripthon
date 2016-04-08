@@ -55,7 +55,10 @@ bool pslFunc(PyObject* item, psl_Value* resp, const psl_Value* const* args) {
 			break;
 		}
 
-		if (arg) PyTuple_SetItem(pa, i, arg);
+		if (arg) {
+			Py_INCREF(arg);
+			PyTuple_SetItem(pa, i, arg);
+		}
 	}
 
 	PyObject* pr = PyObject_CallObject(fp, pa);
