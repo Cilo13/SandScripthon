@@ -1,0 +1,21 @@
+stages:
+  - centos6_release
+  - centos7_release
+
+centos6_release:
+  image: centos:centos6
+  script:
+    - yum -y install gcc make rpm-build python-devel
+    - make rpm-release
+  artifacts:
+    paths:
+      - ./*.rpm
+
+centos7_release:
+  image: centos:centos7
+  script:
+    - yum -y install gcc make rpm-build python-devel
+    - make rpm-release
+  artifacts:
+    paths:
+      - ./*.rpm
