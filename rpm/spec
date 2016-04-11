@@ -21,5 +21,6 @@ make install
 
 %files
 /usr/local/sandvine/etc/policy.py*
+/usr/local/sandvine/etc/policy_test.py*
 /usr/local/sandvine/etc/SandScript.py*
 /usr/local/sandvine/loadable/SandScripthon.so
