@@ -731,7 +731,14 @@ const psl_Manifest* GetManifest() {
 	return m;
 
 fail:
-	if (PyErr_Occurred()) PyErr_Print();
+	if (PyErr_Occurred()) {
+		PyObject *ptype, *pvalue, *ptraceback;
+		PyErr_Fetch(&ptype, &pvalue, &ptraceback);
+		if (pvalue)
+		syslog(LOG_ERR, "SandScripthon error: %s", PyString_AsString(pvalue));
+		if (ptraceback)
+		syslog(LOG_ERR, "SandScripthon traceback: %s", PyString_AsString(ptraceback));
+	}
 	Py_Finalize();
 	return NULL;
 }
