@@ -732,7 +732,7 @@ const psl_Manifest* GetManifest() {
 
 fail:
 	if (PyErr_Occurred()) {
-		PyObject *ptype, *pvalue, *ptraceback;
+		PyObject *ptype = NULL, *pvalue = NULL, *ptraceback = NULL;
 		PyErr_Fetch(&ptype, &pvalue, &ptraceback);
 		if (pvalue)
 		syslog(LOG_ERR, "SandScripthon error: %s", PyString_AsString(pvalue));
