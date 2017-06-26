@@ -14,10 +14,10 @@ for SDE and PTS Virtual Series, and has been only tested with Python 2.
 
 Make sure you have the python-dev packages and build it and install.
 
-On Centos 7, 
+On Centos 7,
 
     yum-config-manager --enable repository CentOSPlus
-    sed -i -e '/exclude=/d' /etc/yum.conf 
+    sed -i -e '/exclude=/d' /etc/yum.conf
     yum groupinstall "Development Tools"
     yum install python-devel
     make install
@@ -29,3 +29,8 @@ care about, and can edit, is policy.py. Note that changes to policy.py
 are only updated on a pts restart (not svreload).
 
 See the policy.conf file, it uses functions exported by policy.py.
+
+## Modules
+
+You can place Python modules in either /usr/local/sandvine/loadable/python,
+or /usr/local/sandvine/etc/
