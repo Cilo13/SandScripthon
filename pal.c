@@ -28,7 +28,8 @@
 
 #define PYMOD     "SandScript"
 #define PYUSERMOD "policy"
-#define PYUSERDIR "/usr/local/sandvine/etc"
+#define PYUSERDIR1 "/usr/local/sandvine/etc"
+#define PYUSERDIR2 "/usr/local/sandvine/loadable/python"
 
 PyObject* pyFuncList[100]; // Max functions that can exist.
 
@@ -714,15 +715,19 @@ buildManifest(PyObject* fl)
 }
 
 const psl_Manifest*
-GetManifest() 
+GetManifest(void)
 {
     syslog(LOG_INFO, "SandScripthon %s (%s)", VERSION, GITCOMMIT);
     Py_Initialize();
 
     // Set path.
-    PyObject* path = PyUnicode_FromString(PYUSERDIR);
-    PyList_Insert(PySys_GetObject("path"), 0, path);
-    Py_INCREF(path);
+    PyObject* path1 = PyUnicode_FromString(PYUSERDIR1);
+    PyList_Insert(PySys_GetObject("path"), 0, path1);
+    Py_INCREF(path1);
+
+    PyObject* path2 = PyUnicode_FromString(PYUSERDIR2);
+    PyList_Insert(PySys_GetObject("path"), 0, path2);
+    Py_INCREF(path2);
 
     // Import SandScript module.
     PyObject* sf = PyImport_ImportModule(PYMOD);

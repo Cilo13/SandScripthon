@@ -14,7 +14,7 @@ module = Extension(
 
 setup (
     name        = 'SandScript',
-    version     = '1.0.2',
+    version     = '1.0.4',
     description = 'Sandvine SandScript extended with Python',
     ext_modules = [module],
 )

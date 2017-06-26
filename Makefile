@@ -1,4 +1,4 @@
-export VERSION = 1.0.3
+export VERSION = 1.0.4
 export GITCOMMIT = $(shell git rev-parse --short HEAD)
 export CFLAGS = -DVERSION=\"$(VERSION)\" -DGITCOMMIT=\"$(GITCOMMIT)\"
 
