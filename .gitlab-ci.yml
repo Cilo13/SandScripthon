@@ -6,7 +6,7 @@ rpm:
   - centos_build:7
   stage: build
   before_script:
-  - yum -y install openpgm-devel python34-devel python34-Cython
+  - yum -y install python34-devel python34-Cython
   script:
   - echo "Started at $(date -Iseconds)"
   - make
