@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 # coding: utf-8
 
 from distutils.core import setup, Extension
@@ -9,7 +9,7 @@ v = sys.version_info
 module = Extension(
     'SandScripthon',
     sources         = ['pal.c'],
-    extra_link_args = ['-lpython%d.%d' % (v[0], v[1])],
+    extra_link_args = ['-lpython%d.%dm' % (v[0], v[1])],
 )
 
 setup (

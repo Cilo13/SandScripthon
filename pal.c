@@ -12,9 +12,11 @@
 */
 
 #include <Python.h>
+#include <bytesobject.h>
 #include <syslog.h>
 
-#include "pal.h"
+#include "sandscript-library-interface/sharedLibTypes.h"
+#include "sandscript-library-interface/sharedLibManifest.h"
 
 #ifndef VERSION
 #define VERSION "tip"
@@ -40,18 +42,18 @@ bool pslFunc(PyObject* item, psl_Value* resp, const psl_Value* const* args) {
 
 	for (i=0; i < na; i++) {
 		PyObject* arg = NULL;
-		switch (PyInt_AsLong(PyTuple_GetItem(al, i))) {
+		switch (PyLong_AsLong(PyTuple_GetItem(al, i))) {
 		case psl_boolean:
 			arg = args[i]->b ? Py_True : Py_False;
 			break;
 		case psl_string:
-			arg = PyString_FromStringAndSize(
+			arg = PyBytes_FromStringAndSize(
 				args[i]->s.begin,
 				args[i]->s.length
 			);
 			break;
 		case psl_integer:
-			arg = PyInt_FromLong((long) args[i]->i);
+			arg = PyLong_FromLong((long) args[i]->i);
 			break;
 		case psl_float:
 			arg = PyFloat_FromDouble(args[i]->f);
@@ -85,7 +87,7 @@ bool pslFunc(PyObject* item, psl_Value* resp, const psl_Value* const* args) {
 
 	bool rv = false;
 
-	switch (PyInt_AsLong(rt)) {
+	switch (PyLong_AsLong(rt)) {
 	case psl_boolean:
 		if (PyBool_Check(pr)) {
 			resp->b = pr == Py_True;
@@ -93,15 +95,15 @@ bool pslFunc(PyObject* item, psl_Value* resp, const psl_Value* const* args) {
 		}
 		break;
 	case psl_string:
-		if (PyString_Check(pr)) {
-			resp->s.begin = PyString_AsString(pr);
+		if (PyBytes_Check(pr)) {
+			resp->s.begin = PyBytes_AsString(pr);
 			resp->s.length = strlen(resp->s.begin);
 			rv = true;
 		}
 		break;
 	case psl_integer:
-		if (PyInt_Check(pr)) {
-			resp->i = PyInt_AsLong(pr);
+		if (PyLong_Check(pr)) {
+			resp->i = PyLong_AsLong(pr);
 			rv = true;
 		}
 		break;
@@ -638,109 +640,144 @@ psl_DataType* buildFuncArgs(PyObject* args) {
 	int i;
 	for (i=0; i < na; i++) {
 		PyObject* arg = PyTuple_GetItem(args, i);
-		if (!PyInt_Check(arg)) return NULL;
+		if (!PyLong_Check(arg)) return NULL;
 		Py_INCREF(arg);
-		pa[i] = PyInt_AsLong(arg);
+		pa[i] = PyLong_AsLong(arg);
 		//Py_DECREF(arg);
 	}
 	return pa;
 }
 
-psl_Manifest* buildManifest(PyObject* fl) {
-	int nf = PyList_Size(fl);
-	int max = sizeof(pslFuncList) / sizeof(pslFuncList[0]);
-	if (nf < 1 || nf > max) return NULL;
+psl_Manifest*
+buildManifest(PyObject* fl)
+{
+    int nf = PyList_Size(fl);
+    int max = sizeof(pslFuncList) / sizeof(pslFuncList[0]);
+    if (nf < 1 || nf > max)
+        return NULL;
 
-	psl_FunctionDescription** fd = calloc(nf, sizeof(psl_FunctionDescription*));
-	assert(fd);
+    psl_FunctionDescription** fd = calloc(nf, sizeof(psl_FunctionDescription*));
+    assert(fd);
 
-	int i;
-	for (i=0; i < nf; i++) {
-		PyObject* item = PyList_GetItem(fl, i);
-		if (!PyTuple_Check(item) && PyTuple_Size(item) != 4)
-			return NULL;
-		Py_INCREF(item);
+    int i;
+    for (i=0; i < nf; i++) 
+    {
+        PyObject* item = PyList_GetItem(fl, i);
+        if (!PyTuple_Check(item) && PyTuple_Size(item) != 4)
+            return NULL;
+        Py_INCREF(item);
 
-		PyObject* func = PyTuple_GetItem(item, 0);
-		if (!PyCallable_Check(func)) return NULL;
-		Py_INCREF(func);
+        PyObject* func = PyTuple_GetItem(item, 0);
+        if (!PyCallable_Check(func))
+            return NULL;
+        Py_INCREF(func);
 
-		PyObject* name = PyTuple_GetItem(item, 1);
-		if (!PyString_Check(name)) return NULL;
-		Py_INCREF(name);
+        PyObject* name = PyTuple_GetItem(item, 1);
+        if (!PyUnicode_Check(name))
+            return NULL;
+        Py_INCREF(name);
 
-		PyObject* args = PyTuple_GetItem(item, 2);
-		if (!PyTuple_Check(args)) return NULL;
-		psl_DataType* pslargs = buildFuncArgs(args);
-		if (!pslargs) return NULL;
-		Py_INCREF(args);
+        PyObject* args = PyTuple_GetItem(item, 2);
+        if (!PyTuple_Check(args))
+            return NULL;
+        psl_DataType* pslargs = buildFuncArgs(args);
+        if (!pslargs)
+            return NULL;
+        Py_INCREF(args);
 
-		PyObject* retval = PyTuple_GetItem(item, 3);
-		if (!PyInt_Check(retval)) return NULL;
-		psl_DataType pslretval = PyInt_AsLong(retval);
-		Py_INCREF(retval);
+        PyObject* retval = PyTuple_GetItem(item, 3);
+        if (!PyLong_Check(retval))
+            return NULL;
+        psl_DataType pslretval = PyLong_AsLong(retval);
+        Py_INCREF(retval);
 
-		fd[i] = malloc(sizeof(psl_FunctionDescription));
-		assert(fd[i]);
-		fd[i]->functionName = PyString_AsString(name);
-		fd[i]->flags = 0;
-		fd[i]->functionPointer = pslFuncList[i];
-		fd[i]->returnType = pslretval;
-		fd[i]->numArgs = PyTuple_Size(args);
-		fd[i]->argTypes = pslargs;
-		pyFuncList[i] = item;
-	}
+        fd[i] = malloc(sizeof(psl_FunctionDescription));
+        assert(fd[i]);
+        Py_ssize_t size;
+        fd[i]->functionName = PyUnicode_AsUTF8AndSize(name, &size);
+        fd[i]->flags = 0;
+        fd[i]->functionPointer = pslFuncList[i];
+        fd[i]->returnType = pslretval;
+        fd[i]->numArgs = PyTuple_Size(args);
+        fd[i]->argTypes = pslargs;
+        pyFuncList[i] = item;
+    }
 
-	psl_Manifest* m = malloc(sizeof(psl_Manifest));
-	assert(m);
+    psl_Manifest* m = malloc(sizeof(psl_Manifest));
+    assert(m);
 
-	m->version = 1;
-	m->numFunctionDescriptions = nf;
-	m->functionDescriptions = (const psl_FunctionDescription* const*) fd;
+    m->version = 1;
+    m->numFunctionDescriptions = nf;
+    m->functionDescriptions = (const psl_FunctionDescription* const*) fd;
 
-	return m;
+    return m;
 }
 
-psl_GetManifest GetManifest;
-const psl_Manifest* GetManifest() {
-	syslog(LOG_INFO, "SandScripthon %s (%s)", VERSION, GITCOMMIT);
-	Py_Initialize();
+const psl_Manifest*
+GetManifest() 
+{
+    syslog(LOG_INFO, "SandScripthon %s (%s)", VERSION, GITCOMMIT);
+    Py_Initialize();
 
-	// Set path.
-	PyObject* path = PyString_FromString(PYUSERDIR);
-	PyList_Insert(PySys_GetObject("path"), 0, path);
-	Py_INCREF(path);
+    // Set path.
+    PyObject* path = PyUnicode_FromString(PYUSERDIR);
+    PyList_Insert(PySys_GetObject("path"), 0, path);
+    Py_INCREF(path);
 
-	// Import SandScript module.
-	PyObject* sf = PyImport_ImportModule(PYMOD);
-	if (!sf) goto fail;
-	Py_INCREF(sf);
+    // Import SandScript module.
+    PyObject* sf = PyImport_ImportModule(PYMOD);
+    if (!sf)
+        goto fail;
 
-	// Import user module.
-	PyObject* uf = PyImport_ImportModule(PYUSERMOD);
-	if (!uf) goto fail;
-	Py_INCREF(uf);
+    Py_INCREF(sf);
 
-	// Load list of registered functions.
-	PyObject* fl = PyObject_GetAttrString(sf, "_func");
-	if (!PyList_Check(fl)) goto fail;
-	Py_INCREF(fl);
+    // Import user module.
+    PyObject* uf = PyImport_ImportModule(PYUSERMOD);
+    if (!uf)
+        goto fail;
+    Py_INCREF(uf);
 
-	psl_Manifest* m = buildManifest(fl);
-	if (!m) goto fail;
-	return m;
+    // Load list of registered functions.
+    PyObject* fl = PyObject_GetAttrString(sf, "_func");
+    if (!PyList_Check(fl))
+        goto fail;
+    Py_INCREF(fl);
+
+    psl_Manifest* m = buildManifest(fl);
+    if (!m)
+        goto fail;
+
+    return m;
 
 fail:
-	if (PyErr_Occurred()) {
-		PyObject *ptype = NULL, *pvalue = NULL, *ptraceback = NULL;
-		PyErr_Fetch(&ptype, &pvalue, &ptraceback);
-		if (pvalue)
-		syslog(LOG_ERR, "SandScripthon error: %s", PyString_AsString(pvalue));
-		if (ptraceback)
-		syslog(LOG_ERR, "SandScripthon traceback: %s", PyString_AsString(ptraceback));
-	}
-	Py_Finalize();
-	return NULL;
+    if (PyErr_Occurred()) 
+    {
+        PyObject *ptype = NULL, *pvalue = NULL, *ptraceback = NULL;
+        PyErr_Fetch(&ptype, &pvalue, &ptraceback);
+        if (ptype != NULL)
+        {
+            PyErr_NormalizeException(&ptype,&pvalue,&ptraceback);
+            if (!ptraceback)
+            {
+                ptraceback = Py_None;
+                Py_INCREF(ptraceback);
+            }
+            if (ptype)
+            {
+                if (pvalue)
+                {
+                    syslog(LOG_ERR, "SandScripthon error: %s", Py_TYPE(pvalue)->tp_name);
+                }
+                if (ptraceback)
+                {
+                    char * b = PyBytes_AsString(ptraceback);
+                    syslog(LOG_ERR, "SandScripthon traceback: %s", b);
+                }
+            }
+        }
+    }
+    Py_Finalize();
+    return NULL;
 }
 
 /*

@@ -1,14 +1,17 @@
-export VERSION = 1.0.2
+export VERSION = 1.0.3
 export GITCOMMIT = $(shell git rev-parse --short HEAD)
 export CFLAGS = -DVERSION=\"$(VERSION)\" -DGITCOMMIT=\"$(GITCOMMIT)\"
 
 all: build
 
-build:
-	python setup.py build
+sandscript-library-interface/.git:
+	git clone https://github.com/sandvine/sandscript-library-interface
+
+build: sandscript-library-interface/.git pal.c
+	python3 setup.py build
 
 clean:
-	python setup.py clean -a
+	python3 setup.py clean -a
 	@rm -rf build *.rpm
 
 install: build
@@ -20,4 +23,5 @@ install: build
 	install -m 0644 policy_test.py $(DESTDIR)/usr/local/sandvine/etc
 
 rpm-release:
+	mv ./build/lib.linux-x86_64-3.4/SandScripthon.cpython-34m.so ./build/lib.linux-x86_64-3.4/SandScripthon.so
 	hack/rpmbuild.sh .
