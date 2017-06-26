@@ -1,23 +1,18 @@
 stages:
-  - centos6_release
-  - centos7_release
+  - build
 
-centos6_release:
-  stage: centos6_release
-  image: centos:centos6
+rpm:
+  tags:
+  - centos_build:7
+  stage: build
+  before_script:
+  - yum -y install openpgm-devel python34-devel python34-Cython
   script:
-    - yum -y install git gcc make rpm-build python-devel
-    - make rpm-release
+  - echo "Started at $(date -Iseconds)"
+  - make
+  - make rpm-release
   artifacts:
     paths:
-      - ./*.rpm
+    - ./*.rpm
 
-centos7_release:
-  stage: centos7_release
-  image: centos:centos7
-  script:
-    - yum -y install git gcc make rpm-build python-devel
-    - make rpm-release
-  artifacts:
-    paths:
-      - ./*.rpm
+
